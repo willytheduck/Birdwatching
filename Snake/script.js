@@ -1,78 +1,78 @@
-//-----------------
-//  SNAKE PATTERN     
-//-----------------
-var bgCanvas = document.getElementById("snakeCanvas");
-var bgCtx = bgCanvas.getContext("2d");
+//-----------
+//  PATTERN
+//-----------
+var sCanvas = document.getElementById("snakeCanvas");
+var sCtx = sCanvas.getContext("2d");
 
-function resizeBgCanvas(){
-  bgCanvas.width = window.innerWidth;
-  bgCanvas.height = window.innerHeight;
-  drawSnakePattern();
+function resSCanvas() {
+  sCanvas.width = window.innerWidth;
+  sCanvas.height = window.innerHeight;
+  drawSPattern();
 }
 
-function drawSnakePattern(){
-  bgCtx.clearRect(0,0,bgCanvas.width, bgCanvas.height);
-  //Retro 8-bit style watermark matching the palette 
-  bgCtx.strokeStyle = "#768256";
-  bgCtx.lineWidth = 32;
-  bgCtx.lineCap = "square";
-  bgCtx.lineJoin = "miter";
+function drawSPattern() {
+  sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
+  //8-Bit Retro
+  sCtx.strokeStyle = "#768256";
+  sCtx.lineWidth = 32;
+  sCtx.lineCap = "square";
+  sCtx.lineJoin = "miter";
 
-  var totalSnakes = 3; //To control how many snakes pattern generate on screen
+  var tSnakes = 3; //pattern generator
 
-  for (var i = 0; i <totalSnakes; i++){
-    //Randomly start along the left edge, snapping it to the block grid
+  for (var i = 0; i < tSnakes; i++) {
+    //random start along left edge
     var x = 0;
-    var y = Math.floor(Math.random()*(bgCanvas.height/32))*32;
+    var y = Math.floor(Math.random() * (sCanvas.height / 32)) * 32;
 
-    bgCtx.beginPath();
-    bgCtx.moveTo(x,y);
+    sCtx.beginPath();
+    sCtx.moveTo(x, y);
 
-    var segmentLength = 64;
-  
-    while (x < bgCanvas.width){
-      x += segmentLength; //Slithers strictyly up or down in sharp 90 degrees
-      y += (Math.random() > 0.5 ? 96 : -96);
+    var segmentL = 64;
 
-      //Bound the background path safety borders
+    while (x < sCanvas.width) {
+      x += segmentL; //slither up or down 90 degree
+      y += Math.random() > 0.5 ? 96 : -96;
+
+      //background path safety
 
       if (y < 32) y = 64;
-      if (y > bgCanvas.height - 32) y = bgCanvas.height -64;
+      if (y > sCanvas.height - 32) y = sCanvas.height - 64;
 
-      bgCtx.lineTo(x,y);
+      sCtx.lineTo(x, y);
     }
-    bgCtx.stroke(); 
+    sCtx.stroke();
   }
 }
 
-window.addEventListener("resize", resizeBgCanvas);
-resizeBgCanvas(); //To build the first background pattern immediately
+window.addEventListener("resize", resSCanvas);
+resSCanvas(); //first background pattern
 
 //-----------
-//    GAME   
+//    GAME
 //-----------
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 
-//Initializing the variables
+//variables
 var score = 0;
 var count = 0;
 var grid = 16;
 
-//Variable to hold the custom frame delay based on slider value
-var frameDelay = 6;
+//var to hold frame delay on slider
+var fDelay = 6;
 
-//Event Listener to update the speed dynamically when slider moves
-var speedSlider = document.getElementById("speedSlider");
-var speedValue = document.getElementById("speedValue");
-if (speedSlider && speedValue){
-  speedSlider.addEventListener("input", function(e){
-    frameDelay = 17 - parseInt(e.target.value);
-    speedValue.innerHTML = e.target.value;
+//listener that update the speed when slider move
+var sSlider = document.getElementById("speedSlider");
+var sValue = document.getElementById("speedValue");
+if (sSlider && sValue) {
+  sSlider.addEventListener("input", function (e) {
+    fDelay = 17 - parseInt(e.target.value);
+    sValue.innerHTML = e.target.value;
   });
 }
 
-//Creating the objects
+//objects
 var snake = {
   x: 160,
   y: 160,
@@ -86,72 +86,72 @@ var apple = {
   y: 320,
 };
 
-//The Keys
+//Keys
 document.addEventListener("keydown", function (e) {
   //left arrow key
   if (e.which === 37 && snake.dx === 0) {
     snake.dx = -grid;
     snake.dy = 0;
   }
-  //Up arrow key
+  //up arrow key
   else if (e.which === 38 && snake.dy === 0) {
     snake.dy = -grid;
     snake.dx = 0;
   }
-  //Right arrow key
+  //right arrow key
   else if (e.which === 39 && snake.dx === 0) {
     snake.dx = grid;
     snake.dy = 0;
   }
-  //Down arrow key
+  //down arrow key
   else if (e.which === 40 && snake.dy === 0) {
     snake.dy = grid;
     snake.dx = 0;
   }
 });
 
-//The Randomizer
+//randomizer
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-//Game Loop
+//the loop
 function Loop() {
   requestAnimationFrame(Loop);
-  if (++count < frameDelay) {
+  if (++count < fDelay) {
     return;
   }
   count = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //Moving the snake velocity
+  //snake velocity
   snake.x += snake.dx;
   snake.y += snake.dy;
-  //Wrapping the snake position horizontally on the edge of the screen
+  //wrap snake position horizontally edge of screen
   if (snake.x < 0) {
     snake.x = canvas.width - grid;
   } else if (snake.x >= canvas.width) {
     snake.x = 0;
   }
-  //Wrapping the snake position vertically on the edge of the screen
+  //wrap snake position vertically edge of screen
   if (snake.y < 0) {
     snake.y = canvas.height - grid;
   } else if (snake.y >= canvas.height) {
     snake.y = 0;
   }
-  //Keeping track of where the snake has been. Front of the array is always the heaf of the snake
+  //track where snake has been, front array head
   snake.cells.unshift({ x: snake.x, y: snake.y });
-  //Removing the cells as we move away from them
+  //cells gone when move away
   if (snake.cells.length > snake.maxCells) {
     snake.cells.pop();
   }
-  //Drawing the apple
+  //apple
   ctx.fillStyle = "red";
   ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
-  //Drawing the snake one cell at a time
+  //snake 1 cell at a time
   ctx.fillStyle = "#a3b574";
   snake.cells.forEach(function (cell, index) {
     ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
-    //Snake ate the apple
+    //apple gone
     if (cell.x === apple.x && cell.y === apple.y) {
       score += 1;
       document.getElementById("score").innerHTML = score;
