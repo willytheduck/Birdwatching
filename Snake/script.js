@@ -57,6 +57,12 @@ var ctx = canvas.getContext("2d");
 var score = 0;
 var count = 0;
 var grid = 16;
+var poison = false;
+var pEnd = 0;
+// var saveMCells = 4;
+var p_Dur = 10000; //10s in ms
+var p_C = 0.01; //1%
+var p_S = 1.25;
 
 //var to hold fDelay on slider
 var fDelay = 6;
@@ -83,7 +89,31 @@ var snake = {
 var apple = {
   x: 320,
   y: 320,
+  poison: false,
 };
+
+//randomizer
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function spawnApple(){
+  apple.x = getRandomInt(0,25)*grid;
+  apple.y = getRandomInt(0,25)*grid;
+  apple.poison = Math.random() < p_C
+}
+function reset(){
+  snake.x = 160;
+  snake.y = 160;
+  snake.cells = [];
+  snake.maxCells = 4;
+  snake.dx = grid;
+  snake.dy = 0;
+  poison = false;
+  score = 0;
+  document.getElementById("score").innerHTML = score;
+  spawnApple();
+}
 
 //Keys
 document.addEventListener("keydown", function (e) {
@@ -109,10 +139,11 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
-//randomizer
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
+
+// //wall
+// function reset(){
+//   snake.x
+// }
 
 //the loop
 function Loop() {
@@ -144,19 +175,34 @@ function Loop() {
     snake.cells.pop();
   }
   //apple
-  ctx.fillStyle = "red";
+  ctx.fillStyle = apple.poison ? "purple" : "red";
   ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+  //poison
+  if (poison && Date.now() >= pEnd){
+    poison = false;
+  }
+  var d = poison ? fDelay / p_S : fDelay;
+  if (++count < d){
+    return;
+  }
+  count = 0;
   //snake 1 cell at a time
-  ctx.fillStyle = "#a3b574";
+  ctx.fillStyle = poison ? "#7bd34f" : "#a3b574";
   snake.cells.forEach(function (cell, index) {
     ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
     //apple gone
     if (cell.x === apple.x && cell.y === apple.y) {
       score += 1;
       document.getElementById("score").innerHTML = score;
-      snake.maxCells += 1;
-      apple.x = getRandomInt(0, 25) * grid;
-      apple.y = getRandomInt(0, 25) * grid;
+      if (apple.poison){
+        if (!poison) saveMCells = snake.maxCells;
+        poison = true;
+        pEnd = Date.now() + p_Dur; //resetting timer
+        snake.maxCells = 1;
+      } else if (!poison){
+        snake.maxCells += 1;
+      }
+      spawnApple();
     }
     for (var i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
@@ -166,8 +212,8 @@ function Loop() {
         snake.maxCells = 4;
         snake.dx = grid;
         snake.dy = 0;
-        apple.x = getRandomInt(0, 25) * grid;
-        apple.y = getRandomInt(0, 25) * grid;
+        poison = false;
+        spawnApple();
       }
     }
   });
