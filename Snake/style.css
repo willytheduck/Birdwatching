@@ -45,12 +45,12 @@ p {
   border-radius: 8px;
   transition: background-color 2s;
 }
-.control-panel {
+.cP{
   margin: 15px 0;
   font-family: "Press Start 2P", cursive;
   color: white;
 }
-#speedSlider {
+#slider {
   -webkit-appearance: none;
   appearance: none;
   width: 200px;
@@ -61,7 +61,7 @@ p {
   cursor: pointer;
   vertical-align: middle;
 }
-#snakeCanvas {
+#sC {
   position: absolute;
   top: 0;
   left: 0;
@@ -71,7 +71,7 @@ p {
   background-color: transparent;
   pointer-events: none;
 }
-.main-content {
+.mCt {
   position: relative;
   z-index: 1;
   text-align: center;

@@ -8,24 +8,23 @@
     <!--CSS Styles-->
   </head>
   <body>
-    <canvas id="snakeCanvas"></canvas>
-    <!-- Background canvas staying outside the wrapper -->
-    <div class="main-content">
+    <canvas id="sC"></canvas>
+    <div class="mCt">
       <h1>A Simple Snake Game</h1>
       <!--Title-->
       <p>Score: <span id="score"> </span></p>
-      <!--Score Display-->
-      <div class="control-panel">
-        <label for="speedSlider">Game Speed:</label>
+      <!--Score-->
+      <div class="cP">
+        <label for="slider">Game Speed:</label>
         <input
           type="range"
-          id="speedSlider"
+          id="slider"
           min="2"
           max="15"
           value="6"
           step="1"
         />
-        <span id="speedValue">6</span>
+        <span id="value">6</span>
       </div>
       <!-- Sliders -->
       <canvas width="400" height="400" id="game"> </canvas>

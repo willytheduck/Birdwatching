@@ -1,7 +1,7 @@
 //-----------
 //  PATTERN
 //-----------
-var sCanvas = document.getElementById("snakeCanvas");
+var sCanvas = document.getElementById("sC");
 var sCtx = sCanvas.getContext("2d");
 
 function resSCanvas() {
@@ -12,13 +12,12 @@ function resSCanvas() {
 
 function drawSPattern() {
   sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
-  //8-Bit Retro
   sCtx.strokeStyle = "#768256";
   sCtx.lineWidth = 32;
   sCtx.lineCap = "square";
   sCtx.lineJoin = "miter";
 
-  var tSnakes = 3; //pattern generator
+  var tSnakes = 3; //pattern
 
   for (var i = 0; i < tSnakes; i++) {
     //random start along left edge
@@ -31,10 +30,10 @@ function drawSPattern() {
     var segmentL = 64;
 
     while (x < sCanvas.width) {
-      x += segmentL; //slither up or down 90 degree
+      x += segmentL; //slither 90 degree
       y += Math.random() > 0.5 ? 96 : -96;
 
-      //background path safety
+      //safety
 
       if (y < 32) y = 64;
       if (y > sCanvas.height - 32) y = sCanvas.height - 64;
@@ -46,7 +45,7 @@ function drawSPattern() {
 }
 
 window.addEventListener("resize", resSCanvas);
-resSCanvas(); //first background pattern
+resSCanvas(); //first bp
 
 //-----------
 //    GAME
@@ -54,17 +53,17 @@ resSCanvas(); //first background pattern
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 
-//variables
+//vars
 var score = 0;
 var count = 0;
 var grid = 16;
 
-//var to hold frame delay on slider
+//var to hold fDelay on slider
 var fDelay = 6;
 
 //listener that update the speed when slider move
-var sSlider = document.getElementById("speedSlider");
-var sValue = document.getElementById("speedValue");
+var sSlider = document.getElementById("slider");
+var sValue = document.getElementById("value");
 if (sSlider && sValue) {
   sSlider.addEventListener("input", function (e) {
     fDelay = 17 - parseInt(e.target.value);
@@ -123,7 +122,7 @@ function Loop() {
   }
   count = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //snake velocity
+  //velocity
   snake.x += snake.dx;
   snake.y += snake.dy;
   //wrap snake position horizontally edge of screen
@@ -138,7 +137,7 @@ function Loop() {
   } else if (snake.y >= canvas.height) {
     snake.y = 0;
   }
-  //track where snake has been, front array head
+  //track snake been, front array head
   snake.cells.unshift({ x: snake.x, y: snake.y });
   //cells gone when move away
   if (snake.cells.length > snake.maxCells) {
