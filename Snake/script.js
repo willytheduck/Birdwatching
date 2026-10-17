@@ -57,11 +57,12 @@ var ctx = canvas.getContext("2d");
 var score = 0;
 var count = 0;
 var grid = 16;
+var gO = false;
 var poison = false;
 var pEnd = 0;
 // var saveMCells = 4;
 var p_Dur = 10000; //10s in ms
-var p_C = 0.01; //1%
+var p_C = 0.025; //2.5%
 var p_S = 1.25;
 
 //var to hold fDelay on slider
@@ -102,6 +103,62 @@ function spawnApple(){
   apple.y = getRandomInt(0,25)*grid;
   apple.poison = Math.random() < p_C
 }
+
+//Highscore
+var s_Key = "scores";
+var allt_Key = "sAllt";
+var d_ms = 24*60*60*1000;
+
+function lScore(){ //score load
+  var saved = localStorage.getItem("scores");
+  if (saved == null){
+    return[];
+  }
+  return JSON.parse(saved);
+}
+function gAllt(){ //get all time
+  var saved = localStorage.getItem("sAllt");
+  if (saved == null){
+    return[];
+  }
+  return parseInt(saved);
+}
+function gBest(winMs){ //best score in last x ms
+  var now = Date.now();
+  var scores = lScore();
+  var best = 0;
+  for (var i = 0; i < scores.length; i++){
+    if(now-scores.time < winMs && score[i].score > best){
+      best = score[i].score;
+    }
+  }
+  return best;
+}
+function svScore(s){ //save score
+  if (s <= 0) return;
+  var now = Date.now();
+  var scores = lScore();
+
+  var recent = []; //older than 7 days score gone
+  for (var i = 0; i<scores.length; i++){
+    if (now-score[i].time < 7 * d_ms){
+      recent.push(scores[i]);
+    }
+  }
+  recent.push({score:s, time:now});
+  localStorage.setItem("score",JSON.stringify(recent));
+
+  if(s>gAllt()){
+    localStorage.setItem("sAllt",s);
+  }
+}
+function swBest(){
+  var el = document.getElementById("best");
+  if (el) {
+    el.innerHTML = getBest(d_ms)
+  }
+}
+//for gameover
 function reset(){
   snake.x = 160;
   snake.y = 160;
@@ -112,9 +169,15 @@ function reset(){
   poison = false;
   score = 0;
   document.getElementById("score").innerHTML = score;
+  swBest();
   spawnApple();
 }
 
+function eGame(){
+  gO = true;
+  svScore(score);
+  swBest();
+}
 //Keys
 document.addEventListener("keydown", function (e) {
   //left arrow key
@@ -139,34 +202,25 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
-
-// //wall
-// function reset(){
-//   snake.x
-// }
-
 //the loop
 function Loop() {
   requestAnimationFrame(Loop);
-  if (++count < fDelay) {
+  if (poison && Date.now() >= pEnd){
+    poison = false;
+  }
+  var d = poison ? fDelay / p_S : fDelay;
+  if (++count < d){
     return;
   }
   count = 0;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   //velocity
   snake.x += snake.dx;
   snake.y += snake.dy;
-  //wrap snake position horizontally edge of screen
-  if (snake.x < 0) {
-    snake.x = canvas.width - grid;
-  } else if (snake.x >= canvas.width) {
-    snake.x = 0;
-  }
-  //wrap snake position vertically edge of screen
-  if (snake.y < 0) {
-    snake.y = canvas.height - grid;
-  } else if (snake.y >= canvas.height) {
-    snake.y = 0;
+  if (snake.x < 0 || snake.x >=canvas.width || snake.y < 0 || snake.y >= canvas.height){
+    reset();
+    return;
   }
   //track snake been, front array head
   snake.cells.unshift({ x: snake.x, y: snake.y });
@@ -177,15 +231,7 @@ function Loop() {
   //apple
   ctx.fillStyle = apple.poison ? "purple" : "red";
   ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
-  //poison
-  if (poison && Date.now() >= pEnd){
-    poison = false;
-  }
-  var d = poison ? fDelay / p_S : fDelay;
-  if (++count < d){
-    return;
-  }
-  count = 0;
+
   //snake 1 cell at a time
   ctx.fillStyle = poison ? "#7bd34f" : "#a3b574";
   snake.cells.forEach(function (cell, index) {
@@ -195,7 +241,7 @@ function Loop() {
       score += 1;
       document.getElementById("score").innerHTML = score;
       if (apple.poison){
-        if (!poison) saveMCells = snake.maxCells;
+        // if (!poison) saveMCells = snake.maxCells;
         poison = true;
         pEnd = Date.now() + p_Dur; //resetting timer
         snake.maxCells = 1;
@@ -206,14 +252,8 @@ function Loop() {
     }
     for (var i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-        snake.x = 160;
-        snake.y = 160;
-        snake.cells = [];
-        snake.maxCells = 4;
-        snake.dx = grid;
-        snake.dy = 0;
-        poison = false;
-        spawnApple();
+        reset();
+        return;
       }
     }
   });

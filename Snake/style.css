@@ -28,7 +28,7 @@ p {
   color: #ddd;
   margin: 10px 0;
 }
-#score {
+#score, #best {
   background-color: #333;
   padding: 10px 20px;
   border-radius: 10px;
