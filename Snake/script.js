@@ -60,7 +60,7 @@ var gO = false;
 var poison = false;
 var pEnd = 0;
 var p_Dur = 10000; //10s in ms
-var p_C = 0.2; //2.5%
+var p_C = 0.025; //2.5%
 var p_S = 1.25;
 
 //var to hold fDelay on slider
