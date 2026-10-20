@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Hello Everyone,
 It is I, Willy Lim.
 I have made this Terra Stuff for Terra! hack club event.
@@ -15,3 +16,7 @@ How to run & play:
 3. only arrow key, space, and enter (WASD hasn't been made yet)
 4. you could use the slider (speed slider) ranges from 2-15 speed
 5. Good Luck! :D
+=======
+# Birdwatching
+Just a simple birdwatching game
+>>>>>>> a7a79002aca7970a9e66aa26117bda1e123d58c6
