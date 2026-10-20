@@ -75,7 +75,7 @@ if (sSlider && sValue) {
     sValue.innerHTML = e.target.value;
   });
 }
-
+  
 //objects
 var snake = {
   x: 0,
@@ -218,22 +218,22 @@ document.addEventListener("keydown", function (e) {
     return;
   }
   //left arrow key
-  if (e.which === 37 && snake.dx === 0) {
+  if (e.which === 37 || e.which === 65 && snake.dx === 0) {
     snake.dx = -grid;
     snake.dy = 0;
   }
   //up arrow key
-  else if (e.which === 38 && snake.dy === 0) {
+  else if (e.which === 38 || e.which === 87 && snake.dy === 0) {
     snake.dy = -grid;
     snake.dx = 0;
   }
   //right arrow key
-  else if (e.which === 39 && snake.dx === 0) {
+  else if (e.which === 39 || e.which === 68 && snake.dx === 0) {
     snake.dx = grid;
     snake.dy = 0;
   }
   //down arrow key
-  else if (e.which === 40 && snake.dy === 0) {
+  else if (e.which === 40 || e.which === 83 && snake.dy === 0) {
     snake.dy = grid;
     snake.dx = 0;
   }
